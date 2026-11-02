@@ -55,6 +55,8 @@ void loop() {
 ### Тесты
 Последовательность катушек, шаги на оборот, скорость, разгон и торможение, кратчайший путь, автоотключение проверены без железа: `extras/test`.
 
+Подробное руководство: [docs/WIKI.md](docs/WIKI.md).
+
 ---
 
 ## Қазақша
@@ -97,6 +99,8 @@ void loop() {
 ### Мысалдар
 `Basic`, `Angles`, `Continuous`, `Clock`, `Diagnose`.
 
+Толық нұсқаулық: [docs/WIKI.md](docs/WIKI.md).
+
 ---
 
 ## English
@@ -138,6 +142,8 @@ void loop() {
 
 ### Examples
 `Basic`, `Angles`, `Continuous`, `Clock`, `Diagnose`.
+
+Full guide: [docs/WIKI.md](docs/WIKI.md).
 
 ### License
 MIT, Alash Electronics.
