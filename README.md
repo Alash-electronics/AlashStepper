@@ -6,7 +6,7 @@
 
 ## Русский
 
-Простая библиотека для шагового двигателя **28BYJ-48** с платой **ULN2003** (он есть почти в каждом наборе): повернуть на угол, на оборот, крутить без остановки, плавно разгоняться и тормозить. Без зависимостей. Сделана для уроков и наборов Alash Electronics.
+Простая библиотека для **шаговых двигателей с любым драйвером**: **28BYJ-48 + ULN2003** (он есть почти в каждом наборе), **NEMA17 через A4988 / DRV8825 / TMC2208 / TB6600 (STEP/DIR)** и биполярные моторы через **L298N / L293D / TB6612**. Повернуть на угол, на оборот, крутить без остановки, плавно разгоняться и тормозить. Без зависимостей. Сделана для уроков и наборов Alash Electronics.
 
 ```cpp
 #include <AlashStepper.h>
@@ -21,6 +21,7 @@ void loop() {
 ```
 
 ### Что умеет
+- **Три типа драйверов:** ULN2003 (по умолчанию), STEP/DIR (микрошаги, вывод EN, длина импульса) и два H-моста с четырьмя проводами.
 - **Пины по порядку IN1, IN2, IN3, IN4**: никаких «8, 10, 9, 11», как в старых примерах Stepper.
 - **Углы и обороты:** `moveDegrees(90)`, `moveTo(180)`, `goToAngle(350)` (кратчайшим путём), `rotate(0.5)`, `moveSteps(n)`.
 - **Настоящие 360 градусов:** у редуктора мотора передаточное число 63.68395, а не 64, поэтому оборот это 4076 шагов в полушаге. Если у вашего мотора 64:1, вызовите `setGearRatio(64)`.
@@ -42,18 +43,26 @@ void loop() {
 | + (питание) | 5 В (лучше отдельный источник) | 5 В |
 | - | GND | GND |
 
+### Другие драйверы
+```cpp
+AlashStepper nema(AlashStepper::DRIVER_STEP_DIR, 2, 3, 200);          // NEMA17 через A4988 / DRV8825: STEP, DIR, полных шагов на оборот
+AlashStepper hbridge(AlashStepper::DRIVER_BIPOLAR_4WIRE, 8, 9, 10, 11); // L298N / L293D / TB6612: A1, A2, B1, B2
+```
+Для STEP/DIR: `setEnablePin(pin)`, `setMicrosteps(16)` (или `setMicrostepPins(...)`, если MS1..MS3 подключены к пинам), `setPulseWidthUs()`, скорость в шагах `setSpeedSteps()`. У NEMA17 важно питание драйвера 8-35 В с конденсатором не менее 47 мкФ и настройка тока (Vref). Остальные методы (`rotate`, `moveDegrees`, `run`, `spin`, `setAcceleration`) те же.
+
 ### Чем отличается от других библиотек
 Мы посмотрели Stepper (встроенная), AccelStepper (Mike McCauley), CheapStepper (Tyler Henry) и Stepper_28BYJ_48:
 - Встроенная Stepper не умеет полушаг и требует порядок пинов 8, 10, 9, 11: это главная причина, почему у новичков мотор «дёргается». У нас пины идут по порядку.
 - Встроенная Stepper блокирует программу, а AccelStepper требует разобраться с режимами, шагами на оборот и ускорением. У нас `moveDegrees(90)`.
 - Стандартные примеры считают оборот как 4096 шагов, и стрелка «уезжает» почти на 2 градуса за оборот; у нас используется настоящее передаточное число редуктора.
+- AccelStepper умеет разные драйверы, но без углов, микрошагов по пинам и подсказок; у нас один интерфейс для ULN2003, STEP/DIR и H-мостов.
 - Ни в одной нет подсказок при неправильном подключении: у нас `diagnose()`.
 
 ### Примеры
-`Basic`, `Angles`, `Continuous`, `Clock`, `Diagnose`.
+`Basic`, `Angles`, `Continuous`, `Clock`, `StepDir_A4988`, `Bipolar_L298N`, `Diagnose`.
 
 ### Тесты
-Последовательность катушек, шаги на оборот, скорость, разгон и торможение, кратчайший путь, автоотключение проверены без железа: `extras/test`.
+Последовательность катушек, шаги на оборот, скорость, разгон и торможение, кратчайший путь, автоотключение, биполярные последовательности, импульсы STEP/DIR (длина, направление, EN), таблицы микрошага A4988 и DRV8825 проверены без железа: `extras/test`.
 
 Подробное руководство: [docs/WIKI.md](docs/WIKI.md).
 
@@ -76,6 +85,7 @@ void loop() {
 ```
 
 ### Мүмкіндіктері
+- **Драйверлердің үш түрі:** ULN2003 (әдепкі), STEP/DIR (A4988, DRV8825, TMC2208, TB6600: микроқадам, EN шықпасы, импульс ұзындығы) және төрт сымды екі H-көпір (L298N, L293D, TB6612). Мысалы: `AlashStepper nema(AlashStepper::DRIVER_STEP_DIR, 2, 3, 200);`
 - **Пиндер IN1, IN2, IN3, IN4 реті бойынша**: ескі Stepper мысалдарындағы «8, 10, 9, 11» жоқ.
 - **Бұрыштар мен айналымдар:** `moveDegrees(90)`, `moveTo(180)`, `goToAngle(350)`, `rotate(0.5)`, `moveSteps(n)`.
 - **Нақты 360 градус:** редуктордың беріліс саны 63.68395. Мотор 64:1 болса, `setGearRatio(64)`.
@@ -97,7 +107,7 @@ void loop() {
 | - | GND | GND |
 
 ### Мысалдар
-`Basic`, `Angles`, `Continuous`, `Clock`, `Diagnose`.
+`Basic`, `Angles`, `Continuous`, `Clock`, `StepDir_A4988`, `Bipolar_L298N`, `Diagnose`.
 
 Толық нұсқаулық: [docs/WIKI.md](docs/WIKI.md).
 
@@ -120,6 +130,7 @@ void loop() {
 ```
 
 ### Features
+- **Three driver types:** ULN2003 (default), STEP/DIR (A4988, DRV8825, TMC2208, TB6600: microsteps, the EN pin, pulse width) and two H-bridges with four wires (L298N, L293D, TB6612). For example: `AlashStepper nema(AlashStepper::DRIVER_STEP_DIR, 2, 3, 200);`
 - **Pins in plain IN1, IN2, IN3, IN4 order**: no "8, 10, 9, 11" trick from old Stepper examples.
 - **Angles and turns:** `moveDegrees(90)`, `moveTo(180)`, `goToAngle(350)` (shortest way), `rotate(0.5)`, `moveSteps(n)`.
 - **A true 360 degrees:** the motor gearbox is 63.68395:1, not 64, so one turn is 4076 half-steps. If your motor is 64:1, call `setGearRatio(64)`.
@@ -141,7 +152,7 @@ void loop() {
 | - | GND | GND |
 
 ### Examples
-`Basic`, `Angles`, `Continuous`, `Clock`, `Diagnose`.
+`Basic`, `Angles`, `Continuous`, `Clock`, `StepDir_A4988`, `Bipolar_L298N`, `Diagnose`.
 
 Full guide: [docs/WIKI.md](docs/WIKI.md).
 
