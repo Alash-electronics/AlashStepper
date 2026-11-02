@@ -1,5 +1,9 @@
-// AlashStepper: секундная стрелка. Мотор делает один оборот за минуту: каждую секунду поворот на 6 градусов.
-// Точность по таймеру Arduino (кварц на Uno точный примерно до минуты в сутки). Для настоящих часов нужен модуль DS3231.
+// [ru] AlashStepper: секундная стрелка. Мотор делает один оборот за минуту: каждую секунду поворот на 6 градусов.
+//      Точность по таймеру Arduino (кварц на Uno точный примерно до минуты в сутки). Для настоящих часов нужен модуль DS3231.
+// [kk] AlashStepper: секундтық тіл. Мотор минутына бір айналым жасайды: әр секунд сайын 6 градусқа бұрылады.
+//      Дәлдік Arduino таймері бойынша (Uno кварцы тәулігіне шамамен бір минутқа дейін дәл). Нағыз сағат үшін DS3231 модулі керек.
+// [en] AlashStepper: a second hand. The motor makes one turn per minute: every second it turns 6 degrees.
+//      The accuracy follows the Arduino timer (the Uno crystal is accurate to about a minute per day). For a real clock you need a DS3231 module.
 #include <AlashStepper.h>
 
 // Пины IN1..IN4 платы ULN2003: Uno / Nano  8, 9, 10, 11;  ESP32  16, 17, 18, 19;  ESP8266  D1, D2, D5, D6.
